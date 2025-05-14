@@ -1,10 +1,10 @@
 <?php
-session_start();
-require_once "src/config/db.php"; // ajuste o caminho conforme seu projeto
+
+require_once "db/db.php"; // ajuste o caminho conforme seu projeto
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario = $_POST['usuario'];
-    $senha = hash('sha256', $_POST['senha']); // criptografar igual ao MySQL
+    $senha = $_POST['senha']; // criptografar igual ao MySQL
 
     $sql = "SELECT * FROM login WHERE email = ? AND senha = ?";
     $stmt = $conn->prepare($sql);
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="card-body">
                 <h3 class="text-center mb-4">Acesso ao Sistema</h3>
 
-                <form method="post" action="index.php?page=login">
+                <form method="post" >
                     <div class="mb-3">
                         <label for="usuario" class="form-label">Usuário (e-mail):</label>
                         <input type="email" name="usuario" id="usuario" class="form-control" required>

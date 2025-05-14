@@ -2,7 +2,7 @@
 $host = 'localhost';
 $user = 'root';       // ou outro se você definiu
 $pass = '';           // coloque sua senha, se tiver
-$db = 'meu_sistema';
+$db = 'projeto_poo'; // nome do banco de dados
 
 $conn = new mysqli($host, $user, $pass, $db);
 
