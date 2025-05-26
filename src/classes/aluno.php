@@ -1,5 +1,8 @@
 <?php
  
+require_once "db/db.php";
+
+
 class Aluno {
     public $nome;
     public $idade;
@@ -37,5 +40,44 @@ class Aluno {
         echo "Idade: <strong>$this->idade</strong> anos<br>";
         echo "CPF: <strong>" . $this->getCpf() . "</strong></p>";
         echo "<p>Profissão: <strong>$this->profissao</strong></p>";
+    }
+
+    // Método para cadastrar o aluno no banco de dados
+    public function cadastrar() {
+        // Conexão com o banco de dados
+        $database = new Database();
+        $conn = $database->getConnection();
+ 
+        // Preparar a consulta SQL
+        $query = "INSERT INTO aluno (nome, idade, cpf, profissao) VALUES (:nome, :idade, :cpf, :profissao)";
+        $stmt = $conn->prepare($query);
+ 
+        // Bind dos parâmetros
+        $stmt->bindParam(':nome', $this->nome);
+        $stmt->bindParam(':idade', $this->idade);
+        $stmt->bindParam(':cpf', $this->cpf);
+        $stmt->bindParam(':profissao', $this->profissao);
+ 
+         // Executar a consulta
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // Método para listar os alunos
+    public static function listar() {
+        // Conexão com o banco de dados
+        $database = new Database();
+        $conn = $database->getConnection();
+ 
+        // Preparar a consulta SQL
+        $query = "SELECT * FROM aluno";
+        $stmt = $conn->prepare($query);
+        $stmt->execute();
+ 
+        // Retornar os resultados
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

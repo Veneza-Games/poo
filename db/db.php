@@ -1,12 +1,22 @@
 <?php
-$host = 'localhost';
-$user = 'root';       // ou outro se você definiu
-$pass = '';           // coloque sua senha, se tiver
-$db = 'projeto_poo'; // nome do banco de dados
-
-$conn = new mysqli($host, $user, $pass, $db);
-
-if ($conn->connect_error) {
-    die("Erro de conexão: " . $conn->connect_error);
+ 
+class Database {
+    private $host = "localhost";
+    private $db_name = "projeto_poo";
+    private $username = "root";
+    private $password = "";
+    private $conn;
+ 
+    public function getConnection() {
+        $this->conn = null;
+ 
+        try {
+            $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->db_name, $this->username, $this->password);
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $exception) {
+            echo "Erro na conexão: " . $exception->getMessage();
+        }
+ 
+        return $this->conn;
+    }
 }
-?>

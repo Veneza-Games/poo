@@ -1,28 +1,30 @@
 <?php
-require __DIR__ . "/../classes/escola.php";
-
-// iniciando as variaveis
-$nome = $cnpj = $endereco = $cidade ="";
+require_once "src/classes/escola.php";
+ 
+// Inicializa as variáveis
+$nome = $endereco = $cidade = $cnpj = "";
 $escolaCriado = false;
-
-
+ 
 //Cadastrando
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nome = trim($_POST["nome"]);
-    $cnpj = trim($_POST["cnpj"]);
-    $endereco = trim($_POST["endereco"]);
-    $cidade = trim($_POST["cidade"]);
-    try {
-        $escola = new Escola($nome, $cnpj, $endereco, $cidade);
-        $escolaCriado = true;
-    } catch (Exception $e) {
-        echo "<div class='alert alert-danger mt-3'>" . $e->getMessage() . "</div>";
+    $nome = $_POST["nome"];
+    $endereco = $_POST["endereco"];
+    $cnpj = $_POST["cnpj"];
+    $cidade = $_POST["cidade"];
+   
+    $escola = new Escola($nome, $endereco, $cidade, $cnpj);
+    $escolaCriado = $escola->cadastrar();
+ 
+    if ($escolaCriado) {
+        echo "<div class='alert alert-success'>Cadastro efetuado com sucesso</div>";
+    } else {
+        echo "<div class='alert alert-danger'>Erro ao cadastrar a escola</div>";
     }
 }
+// Listando as escolas
+$escolas = Escola::listar();
 ?>
-
-
-
+ 
 <h2>Cadastro de Escola</h2>
  
 <form method="post" class="row g-3 mb-4">
@@ -33,19 +35,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
  
     <div class="col-md-2">
-        <label for="endereco" class="form-label">Endereçoo:</label>
+        <label for="cnpj" class="form-label">CNPJ:</label>
+        <input type="text" name="cnpj" id="cnpj" class="form-control"
+            value="<?= htmlspecialchars($cnpj) ?>">
+    </div>
+ 
+    <div class="col-md-4">
+        <label for="endereco" class="form-label">Endereço:</label>
         <input type="text" name="endereco" id="endereco" class="form-control"
             value="<?= htmlspecialchars($endereco) ?>">
     </div>
  
-    <div class="col-md-1">
-        <label for="cnpj" class="form-label">CNPJ:</label>
-        <input type="number" name="cnpj" id="cnpj" class="form-control"
-            value="<?= htmlspecialchars($cnpj) ?>">
-    </div>
-
-    <div class="col-md-5">
-        <label for="Profissao" class="form-label">Cidade:</label>
+    <div class="col-md-2">
+        <label for="cidade" class="form-label">Cidade:</label>
         <input type="text" name="cidade" id="cidade" class="form-control"
             value="<?= htmlspecialchars($cidade) ?>">
     </div>
@@ -54,10 +56,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <button type="submit" class="btn btn-primary">Cadastrar</button>
     </div>
 </form>
-
-<?php 
-if ($escolaCriado) {
-    echo "<h3>Resultado:</h3>";
-    $escola->exibirDados();
-}
-?>
+<h3>Lista de Escola</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>CNPJ</th>
+            <th>Endereço</th>
+            <th>Cidade</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($escolas as $escola): ?>
+            <tr>
+                <td><?= htmlspecialchars($escola['nome']) ?></td>
+                <td><?= htmlspecialchars($escola['CNPJ']) ?></td>
+                <td><?= htmlspecialchars($escola['endereco']) ?></td>
+                <td><?= htmlspecialchars($escola['cidade']) ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>

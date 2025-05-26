@@ -5,14 +5,21 @@ require_once "db/db.php"; // ajuste o caminho conforme seu projeto
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario = $_POST['usuario'];
     $senha = $_POST['senha']; // criptografar igual ao MySQL
+    $database = new Database();
+        $conn = $database->getConnection();
 
-    $sql = "SELECT * FROM login WHERE email = ? AND senha = ?";
+    $sql = "SELECT * FROM login WHERE email = :email AND senha = :senha";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", $usuario, $senha);
+    
+    $stmt->bindParam(':email', $usuario);
+    $stmt->bindParam(':senha', $senha);
     $stmt->execute();
-    $result = $stmt->get_result();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Verifica se o usuário existe
 
-    if ($result->num_rows === 1) {
+    if ($result) {
+        // Inicia a sessão
+
         $_SESSION['usuario'] = $usuario;
         header("Location: index.php?page=home");
         exit();

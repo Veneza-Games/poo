@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . "/../classes/aluno.php";
+require_once "src/classes/aluno.php";
 
 // iniciando as variaveis
 $nome = $idade = $cpf = $profissao ="";
@@ -14,11 +14,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $profissao = trim($_POST["profissao"]);
     try {
         $aluno = new Aluno($nome, $idade, $cpf, $profissao);
-        $alunoCriado = true;
+        $alunoCriado = $aluno->cadastrar();
+        if ($alunoCriado) {
+            echo "<div class='alert alert-success'>Cadastro efetuado com sucesso</div>";
+        } else {
+            echo "<div class='alert alert-danger'>Erro ao cadastrar o aluno</div>";
+        }
     } catch (Exception $e) {
         echo "<div class='alert alert-danger mt-3'>" . $e->getMessage() . "</div>";
     }
 }
+$alunos = Aluno::listar();
+// Listando os alunos
 ?>
 
 
@@ -55,9 +62,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </form>
 
-<?php 
-if ($alunoCriado) {
-    echo "<h3>Resultado:</h3>";
-    $aluno->exibirDados();
-}
-?>
+<h3>Lista de Alunos</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>Idade</th>
+            <th>Profissão</th>
+        </tr>
+    </thead>
+    <tbody>
+       <?php if ($alunos && count($alunos) > 0): ?>
+            <?php foreach ($alunos as $aluno): ?>
+                <tr>
+                    <td><?= htmlspecialchars($aluno['nome']) ?></td>
+                    <td><?= htmlspecialchars($aluno['CPF']) ?></td>
+                    <td><?= htmlspecialchars($aluno['Idade']) ?></td>
+                    <td><?= htmlspecialchars($aluno['profissao']) ?></td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="4" class="text-center">Nenhum aluno cadastrado.</td>
+            </tr>
+        <?php endif; ?>
+    </tbody>
+</table>

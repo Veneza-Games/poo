@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . "/../classes/curso.php";
+require_once "src/classes/curso.php";
 
 // iniciando as variaveis
 $titulo = $horas = $dias = $aluno ="";
@@ -14,11 +14,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $aluno = trim($_POST["aluno"]);
     try {
         $curso = new Curso($titulo, $horas, $dias, $aluno);
-        $cursoCriado = true;
+        $cursoCriado = $curso->cadastrar();
+        if ($cursoCriado) {
+            echo "<div class='alert alert-success'>Cadastro efetuado com sucesso</div>";
+        } else {
+            echo "<div class='alert alert-danger'>Erro ao cadastrar o curso</div>";
+        }
     } catch (Exception $e) {
         echo "<div class='alert alert-danger mt-3'>" . $e->getMessage() . "</div>";
     }
 }
+// Listando os cursos
+$cursos = Curso::listar();
 ?>
 
 
@@ -54,10 +61,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <button type="submit" class="btn btn-primary">Cadastrar</button>
     </div>
 </form>
+<h3>Lista de Cursos</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Titulo</th>
+            <th>Horas</th>
+            <th>Dias</th>
+            <th>Alunos</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($cursos as $curso): ?>
+            <tr>
+                <td><?= htmlspecialchars($curso['Titulo']) ?></td>
+                <td><?= htmlspecialchars($curso['Horas']) ?></td>
+                <td><?= htmlspecialchars($curso['Dias']) ?></td>
+                <td><?= htmlspecialchars($curso['Alunos']) ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
 
-<?php 
-if ($cursoCriado) {
-    echo "<h3>Resultado:</h3>";
-    $curso->exibirDados();
-}
-?>
